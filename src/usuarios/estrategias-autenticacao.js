@@ -3,7 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const Usuario = require('./usuarios-modelo');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
-const { InvalidArgumentError } = require('../erros');
+const { InvalidArgumentError, ExpirationError } = require('../erros');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -18,6 +18,12 @@ async function verificaSenha(senha, senhaHash) {
 
     if(!senhaValida) {
         throw new InvalidArgumentError('E-mail ou senha inválidos.');
+    }
+}
+
+function verificaExpiracao(tempoExpiracao) {
+    if(tempoExpiracao > Date.now()) {
+        throw new ExpirationError('Token expirado!');
     }
 }
 
@@ -47,6 +53,9 @@ passport.use(
             try {
                 const payload = jwt.verify(token, process.env.CHAVE_JWT);
                 const usuario = await Usuario.buscaPorId(payload.id);
+                
+                verificaExpiracao(payload.expiraEm);
+
                 done(null, usuario);
             } catch(erro) {
                 done(erro);

@@ -29,7 +29,12 @@ module.exports = {
             'bearer',
             { session: false },
             (erro, usuario, info) => {
-                if (erro && erro.message === 'JsonWebTokenError') {
+                const tokenErro = {
+                    'JsonWebTokenError': true,
+                    'ExpirationError': true
+                }
+
+                if (erro && tokenErro[erro.name]) {
                     return res.status(401).json({ erro: erro.message });
                 }
 
