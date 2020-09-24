@@ -4,13 +4,11 @@ const jwt = require('jsonwebtoken');
 
 
 function criaTokenJWT(usuario) {
-	const cincoDiasEmMilissegundos = 432000000;
 	const payload = {
-		id: usuario.id,
-		expiraEm: Date.now() + cincoDiasEmMilissegundos
+		id: usuario.id
 	};
 
-	const token = jwt.sign(payload, process.env.CHAVE_JWT);
+	const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '15m' });
 	return token;
 }
 
