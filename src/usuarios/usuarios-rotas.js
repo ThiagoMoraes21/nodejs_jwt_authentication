@@ -1,5 +1,4 @@
 const usuariosControlador = require('./usuarios-controlador');
-const passport = require('passport');
 const middlewaresAutenticacao = require('./middlewares-autenticacao');
 
 module.exports = app => {
@@ -17,7 +16,7 @@ module.exports = app => {
 	app
 		.route('/usuario/:id')
 		.delete(
-			passport.authenticate('bearer', { session: false }),
+			middlewaresAutenticacao.bearer,
 			usuariosControlador.deleta
 		);
 };
